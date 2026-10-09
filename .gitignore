@@ -1,0 +1,6 @@
+.care-bot-pass
+.care-bot-cred
+backups/
+node_modules
+.env
+*.wav

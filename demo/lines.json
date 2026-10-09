@@ -1,0 +1,13 @@
+[
+ {"id": "1-hook", "text": "A clinic pays for website maintenance every month, and never really knows what was done. So I made the work visible."},
+ {"id": "2-run", "text": "Every Monday at eight, an n8n workflow checks the site. Here I start it by hand."},
+ {"id": "3-flow", "text": "It checks the site three times, reads the plugins, backups and errors, and runs a speed test. Claude writes the report, then it's saved and emailed."},
+ {"id": "4-inbox", "text": "And here it is, in the owner's inbox."},
+ {"id": "5-read", "text": "Green. All three checks answered, everything is up to date, and today's backup is on record. Each part in plain words, no jargon."},
+ {"id": "6-actions", "text": "Then a short to-do list, and the real numbers underneath."},
+ {"id": "7-stale", "text": "Now I put one plugin behind on purpose. Contact Form 7, back to an older version."},
+ {"id": "8-run2", "text": "And run the check again."},
+ {"id": "9-amber", "text": "Amber. The waiting update shows up straight away, and the to-do list says exactly which add-on to update."},
+ {"id": "10-archive", "text": "Every report is kept in an archive, and every number in it is checked against the real data."},
+ {"id": "11-end", "text": "Built by McKeen Asma, WordPress and AI Automation V A, with N eight N, and Claude."}
+]

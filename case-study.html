@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WordPress Care-Plan Report: Weekly Plain-English Email (n8n + Claude) | Case Study</title>
+<meta name="description" content="Case study: a weekly website care report for a clinic owner. An n8n workflow checks a WordPress site (online, updates waiting, PHP errors, backup age, speed score), Claude writes it up in plain English, every number is checked against the real data, and it is emailed and archived. Built by McKeen Asma, WordPress &amp; AI Automation VA.">
+<meta name="author" content="McKeen Asma">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WordPress care plan, made visible: a weekly plain-English report the owner actually reads">
+<meta property="og:description" content="n8n checks the site every Monday, Claude writes what was checked and what needs doing, every number is checked against the data, then it is emailed and archived. Demo clinic site, code on GitHub.">
+<meta property="og:image" content="img/poster.jpg">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="506">
+<meta property="og:image:alt" content="The care report archive: an amber report saying one add-on needs an update this week, with the to-do list and the real numbers">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WordPress care-plan report: n8n + Claude, every Monday">
+<meta name="twitter:description" content="A weekly email that tells a clinic owner, in plain words, what was checked on the website and what needs doing. Numbers checked against the real data.">
+<meta name="twitter:image" content="img/poster.jpg">
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--ink:#14212b;--muted:#5a6b78;--line:#dde3e8;--accent:#0f7c86;--accent-soft:#e3f3f4;--amber:#b45309}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1519;--card:#172026;--ink:#e6edf1;--muted:#9aabb6;--line:#2a3640;--accent:#4fc1ca;--accent-soft:#16343a;--amber:#f5a524}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:32px 16px 56px}
+h1{font-size:clamp(26px,6vw,36px);line-height:1.2;margin:.2em 0 .3em}
+h2{font-size:21px;margin:40px 0 10px}
+h3{font-size:17px;margin:20px 0 4px}
+p{margin:0 0 12px}
+.tag{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.lede{font-size:19px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:28px;color:var(--accent);line-height:1.2}
+.stat span{font-size:14px;color:var(--muted)}
+figure{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+figure img{display:block;width:100%;height:auto;border-radius:8px}
+figcaption{font-size:14px;color:var(--muted);padding:8px 4px 0}
+ol,ul{padding-left:22px;margin:0 0 12px}
+li{margin:6px 0}
+.note{font-size:14px;color:var(--muted)}
+.method{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:12px 16px;font-size:15px;margin:16px 0}
+.method p{margin:0 0 8px}.method p:last-child{margin:0}
+.report{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:16px 0}
+.pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;color:#fff;background:var(--amber);border-radius:999px;padding:2px 10px}
+.report .hl{font-size:19px;font-weight:700;margin:8px 0 10px}
+.report .eff{font-size:13px;color:var(--muted)}
+code{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.tbl{overflow-x:auto;margin:0 0 12px}
+table{width:100%;border-collapse:collapse;font-size:15px;background:var(--card)}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.transcript p{margin:0 0 10px}
+.transcript time{display:inline-block;min-width:3.2em;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.next{margin:24px 0 0;font-size:16px}
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:15px}
+a{color:var(--accent)}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"WordPress care-plan report: a weekly plain-English email from n8n + Claude","description":"Case study on a demo dental clinic WordPress site. Every Monday an n8n workflow checks the site (3 checks that it is online, updates waiting, WordPress and PHP versions, PHP errors in the last 24 hours, backup age, a Lighthouse speed score), Claude writes a plain-English report for the non-technical owner, code checks every number in it against the run's data, and the report is saved, emailed and archived. A second run after one plugin was put behind on purpose turned amber and told the owner exactly which add-on to update.","image":"img/poster.jpg","inLanguage":"en","datePublished":"2026-10-09","author":{"@type":"Person","name":"McKeen Asma","jobTitle":"WordPress & AI Automation VA","url":"https://mckenneth.vercel.app","address":{"@type":"PostalAddress","addressLocality":"Davao City","addressCountry":"PH"}},"about":["WordPress maintenance","website care plan","client reporting","uptime check","plugin updates","WordPress backups","n8n workflow automation","Claude AI"],"keywords":"WordPress maintenance, website care plan, monthly maintenance report, client report, uptime monitoring, plugin updates, backups, site health, Lighthouse, n8n, Claude, AI automation, virtual assistant, dental clinic","isBasedOn":{"@type":"SoftwareSourceCode","name":"wp-care-report","codeRepository":"https://github.com/mcknx/wp-care-report","license":"https://opensource.org/licenses/MIT"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"VideoObject","name":"WordPress care-plan report demo (n8n + Claude)","description":"88-second demo on a demo dental clinic WordPress site: the weekly n8n check is started by hand, Claude writes the report and it lands in the owner's inbox as GREEN. Then one plugin is put behind on purpose, the check runs again, and the report turns AMBER with the exact add-on to update. Waiting time is cut and captioned; the on-screen timer shows real time.","thumbnailUrl":"img/poster.jpg","contentUrl":"demo/p6-demo.mp4","uploadDate":"2026-10-09","duration":"PT1M28S","inLanguage":"en","creator":{"@type":"Person","name":"McKeen Asma"},"transcript":"A clinic pays for website maintenance every month, and never really knows what was done. So I made the work visible. Every Monday at eight, an n8n workflow checks the site. Here I start it by hand. It checks the site three times, reads the plugins, backups and errors, and runs a speed test. Claude writes the report, then it's saved and emailed. And here it is, in the owner's inbox. Green. All three checks answered, everything is up to date, and today's backup is on record. Each part in plain words, no jargon. Then a short to-do list, and the real numbers underneath. Now I put one plugin behind on purpose. Contact Form 7, back to an older version. And run the check again. Amber. The waiting update shows up straight away, and the to-do list says exactly which add-on to update. Every report is kept in an archive, and every number in it is checked against the real data. Built by McKeen Asma, WordPress and AI Automation VA, with n8n, and Claude."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can the AI make up numbers in my report?","acceptedAnswer":{"@type":"Answer","text":"Claude is told to use only numbers from the check data, and then code checks it: every number written with digits in the headline, sections and to-do list must appear in that run's data. If one does not, that sentence is swapped for a plain template line and the swap is counted on the report. In the two filmed reports nothing had to be swapped. Numbers written as words (\"three\") are not checked, and a number can still be one from elsewhere in the same run's data, so the table of real numbers is always in the email underneath."}},{"@type":"Question","name":"Is this 24/7 uptime monitoring?","acceptedAnswer":{"@type":"Answer","text":"No. The report checks the site 3 times when it runs, a second apart, and says so. For round-the-clock alerts I would add a monitor like UptimeRobot or a short n8n schedule that only messages you when the site is down."}},{"@type":"Question","name":"Does it update plugins by itself?","acceptedAnswer":{"@type":"Answer","text":"No. It reports what is waiting and what to do. The updates themselves are done by a person, after a backup, ideally tried on a copy of the site first, so an update cannot take the site down on a Monday morning."}},{"@type":"Question","name":"Does it work with my Gmail and my host?","acceptedAnswer":{"@type":"Answer","text":"This demo sends to a local test mailbox (Mailpit). For a real client the Send Email node gets your mail provider's SMTP login or n8n's Gmail node; nothing else changes. That swap is documented, not run here. On your site it needs one small must-use plugin file and a separate WordPress user that can only read the health check."}},{"@type":"Question","name":"Is this a real client site?","acceptedAnswer":{"@type":"Answer","text":"No. Bayview Dental is a demo clinic I built on WordPress, the same one as my site rescue and speed fix case studies. The checks, the reports and the emails are real runs against that site. There is no paying client here."}}]}
+</script>
+</head>
+<body>
+<main>
+<article>
+<header>
+<span class="tag">Case study · WordPress care report · n8n + Claude</span>
+<h1>Website maintenance you can actually see: a plain-English report every Monday</h1>
+<p class="lede">Clinics pay for website maintenance and never see what was done. Now the owner gets one short email every Monday: is the site OK, and what needs doing this week. No jargon. A machine does the checking and the writing in under a minute.</p>
+<p class="code-link"><a href="https://github.com/mcknx/wp-care-report">View the code on GitHub →</a></p>
+</header>
+
+<figure id="demo-video"><video controls preload="metadata" playsinline src="demo/p6-demo.mp4" poster="img/poster.jpg" style="display:block;width:100%;height:auto;border-radius:8px" aria-describedby="transcript-intro"></video><figcaption>The 88-second demo, narrated in my own voice (AI voice clone). Two real runs: the site healthy (green), then one plugin put behind on purpose (amber). The video cuts waiting time and says so on screen; the timer shows real time. Prefer reading? The <a href="#transcript">full transcript</a> is below.</figcaption></figure>
+
+<div class="stats">
+<div class="stat"><b>Under 33 s</b><span>to check the site, write the report and email it (25.9 s and 32.8 s in the two filmed runs), with nobody at the keyboard</span></div>
+<div class="stat"><b>Caught next run</b><span>a plugin I put behind on purpose: the next report named it, with the exact version to update to</span></div>
+<div class="stat"><b>1 email a week</b><span>every Monday 08:00, plus a "run now" button</span></div>
+</div>
+
+<section id="before-after">
+<h2>For the owner, before and after</h2>
+<div class="tbl"><table>
+<thead><tr><th>Before</th><th>After</th></tr></thead>
+<tbody>
+<tr><td>Pays for maintenance, doesn't know what was done</td><td>A Monday email saying what was checked</td></tr>
+<tr><td>Finds out the site is broken when a patient calls</td><td>Green, amber or red at the top, so she knows in one glance</td></tr>
+<tr><td>"Plugins", "PHP", "LCP": jargon she can't act on</td><td>A short to-do list in plain words, quickest jobs marked</td></tr>
+<tr><td>Has to trust the numbers</td><td>The real numbers in a table under the report, and code checks the AI didn't invent any</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="the-report">
+<h2>What the owner gets</h2>
+<p>This is the real amber report from the filmed run, word for word, after I put the Contact Form 7 plugin back to an older version:</p>
+<div class="report">
+<span class="pill">AMBER</span>
+<p class="hl">Your website is online and backed up today. One add-on needs an update this week.</p>
+<p><b>What to do</b></p>
+<ol>
+<li><b>Update the contact form add-on from version 6.1.7 to 6.2.1.</b> <span class="eff">(quick)</span><br>Updates fix problems and close security gaps. Patients use this form to reach you, so it should stay current.</li>
+<li><b>Make the main part of the home page show up faster.</b> <span class="eff">(medium)</span><br>It takes 5.3 seconds to appear right now. Patients on phones may leave before it loads.</li>
+</ol>
+</div>
+<p>The healthy run before it was green: "Your website is online, up to date, backed up today, and showing no errors." Green means all 3 checks answered, nothing is waiting to update and a backup is less than 7 days old. Amber means something needs doing this week. Red means the site is down or the check itself failed.</p>
+<figure><img src="img/email-1280.jpg" width="1280" height="720" loading="lazy" alt="The amber care report email in the test mailbox: subject Website care report, Bayview Dental, AMBER; headline and the Online and speed, Updates and Backups sections"><figcaption>The email as it arrives (local test mailbox). Under the to-do list there is a table of the real numbers.</figcaption></figure>
+</section>
+
+<section id="setup">
+<h2>What I'd set up for you</h2>
+<ol>
+<li><b>A safe look-only login on your website:</b> one small file and a separate user that can read the health check, but can't change anything or see your password.</li>
+<li><b>Your backups counted:</b> the report says when the last backup ran. I'd connect it to the backup you already have (from your host or a backup plugin).</li>
+<li><b>The weekly email:</b> sent from your own email account, to whoever you choose, every Monday morning.</li>
+<li><b>Your AI account, not mine:</b> the AI writing runs on your own key, one AI call per report, billed to you so you can see it.</li>
+<li><b>Then the work itself:</b> I do the to-do list that week, updates after a backup, and next Monday's email shows it done.</li>
+</ol>
+<p class="note">I haven't run this for a paying client yet; this demo is how I'd run it on yours. Technical details are further down.</p>
+</section>
+
+<section id="faq">
+<h2>FAQ</h2>
+<h3>Can the AI make up numbers in my report?</h3>
+<p>Claude is told to use only numbers from the check data, and then code checks it: every number written with digits in the headline, sections and to-do list must appear in that run's data. If one does not, that sentence is swapped for a plain template line and the swap is counted on the report. In the two filmed reports nothing had to be swapped. Numbers written as words ("three") are not checked, and a number can still be one from elsewhere in the same run's data, so the table of real numbers is always in the email underneath.</p>
+<h3>Is this 24/7 uptime monitoring?</h3>
+<p>No. The report checks the site 3 times when it runs, a second apart, and says so. For round-the-clock alerts I would add a monitor like UptimeRobot or a short n8n schedule that only messages you when the site is down.</p>
+<h3>Does it update plugins by itself?</h3>
+<p>No. It reports what is waiting and what to do. The updates themselves are done by a person, after a backup, ideally tried on a copy of the site first, so an update cannot take the site down on a Monday morning.</p>
+<h3>Does it work with my Gmail and my host?</h3>
+<p>This demo sends to a local test mailbox (Mailpit). For a real client the Send Email node gets your mail provider's SMTP login or n8n's Gmail node; nothing else changes. That swap is documented, not run here. On your site it needs one small must-use plugin file and a separate WordPress user that can only read the health check.</p>
+<h3>Is this a real client site?</h3>
+<p>No. Bayview Dental is a demo clinic I built on WordPress, the same one as my site rescue and speed fix case studies. The checks, the reports and the emails are real runs against that site. There is no paying client here.</p>
+</section>
+
+<section id="how">
+<h2>How it works</h2>
+<ol>
+<li><b>Start:</b> n8n's schedule fires every Monday at 08:00 (Asia/Manila), or a "run now" webhook starts it by hand.</li>
+<li><b>Online:</b> 3 requests to the home page, a second apart, timed.</li>
+<li><b>Health:</b> one request to the site's own health check (<code>/wp-json/bayview/v1/health</code>, a must-use plugin), with an application password for the read-only <code>care-bot</code> user. It returns WordPress and PHP versions, each plugin and whether an update is waiting, theme and core updates, PHP errors in the last 24 hours and the time of the last backup.</li>
+<li><b>Speed:</b> one mobile Lighthouse run: speed score, how long the main part of the page takes to show, page weight.</li>
+<li><b>Write:</b> Claude gets the data and a strict brief (plain English, a status, sections, a to-do list, only numbers from the data) and returns JSON.</li>
+<li><b>Check:</b> code parses the JSON, checks every number against the data, and sets a status floor from the data (a waiting update or an old backup is at least amber whatever Claude says; it can raise the status, never lower it). If Claude fails, a template report is built from the data instead.</li>
+<li><b>Send and keep:</b> saved to Postgres, emailed to the owner, shown in the report archive.</li>
+</ol>
+<figure><img src="img/archive-1280.jpg" width="1280" height="720" loading="lazy" alt="The report archive page: the amber report #2 with its sections, the What to do list and The numbers table, and a Past runs list with amber #2 and green #1"><figcaption>The report archive: every run kept, newest first, with the numbers it was based on.</figcaption></figure>
+</section>
+
+<section id="method">
+<div class="method">
+<p><b>How this was done.</b> The WordPress site (the demo clinic from my <a href="https://mckenneth.vercel.app/case-studies/wp-site-rescue/">site rescue</a> case study) runs in Docker on my machine, with n8n, Postgres and Mailpit. The two filmed runs took 25.9 s and 32.8 s from start to saved-and-emailed; the video cuts the waiting and says so.</p>
+<p><b>Honest notes:</b> it is a demo site and the emails go to a local test mailbox (Mailpit), not Gmail; the real SMTP or Gmail swap is documented, not claimed. Claude runs through a small local bridge on my Claude Max plan; for a client it would be their own API key in n8n's AI node. "Online" means 3 checks at report time, not 24/7 monitoring. The speed score is one Lighthouse run per report, so it moves from run to run (I saw 57 to 77 on the same site). The number check covers digits only, and the allowed numbers are the whole run's data.</p>
+</div>
+</section>
+
+<section id="tools">
+<h2>Tools used</h2>
+<ul>
+<li><b>n8n</b> (self-hosted): Schedule, Webhook, Code, HTTP Request, Postgres, Send Email and Respond to Webhook nodes.</li>
+<li><b>Claude</b> (Anthropic): writes the report as strict JSON.</li>
+<li><b>WordPress</b>: a must-use plugin for the health check, an application password for a read-only user, <b>WP-CLI</b> for the backup.</li>
+<li><b>Lighthouse</b> for the speed score, <b>Postgres</b> for the archive, <b>Mailpit</b> as a local test mailbox.</li>
+</ul>
+<p><a href="https://github.com/mcknx/wp-care-report">View the code on GitHub →</a> (workflow, health-check plugin, install and backup scripts, number check with tests, MIT licence)</p>
+</section>
+
+<section id="transcript" class="transcript">
+<h2>Video transcript</h2>
+<p id="transcript-intro" class="note">Full narration of the 88-second demo video, with start times.</p>
+<p><time>0:00</time> A clinic pays for website maintenance every month, and never really knows what was done. So I made the work visible.</p>
+<p><time>0:09</time> Every Monday at eight, an n8n workflow checks the site. Here I start it by hand.</p>
+<p><time>0:16</time> It checks the site three times, reads the plugins, backups and errors, and runs a speed test. Claude writes the report, then it&#x27;s saved and emailed.</p>
+<p><time>0:31</time> And here it is, in the owner&#x27;s inbox.</p>
+<p><time>0:34</time> Green. All three checks answered, everything is up to date, and today&#x27;s backup is on record. Each part in plain words, no jargon.</p>
+<p><time>0:43</time> Then a short to-do list, and the real numbers underneath.</p>
+<p><time>0:47</time> Now I put one plugin behind on purpose. Contact Form 7, back to an older version.</p>
+<p><time>0:55</time> And run the check again.</p>
+<p><time>1:02</time> Amber. The waiting update shows up straight away, and the to-do list says exactly which add-on to update.</p>
+<p><time>1:13</time> Every report is kept in an archive, and every number in it is checked against the real data.</p>
+<p><time>1:21</time> Built by McKeen Asma, WordPress and AI Automation VA, with n8n, and Claude.</p>
+</section>
+
+<p class="next">Same clinic: <a href="https://mckenneth.vercel.app/case-studies/wp-site-rescue/">WordPress site rescue</a> (the site this report watches, brought back three times) · <a href="https://mckenneth.vercel.app/case-studies/wp-speed-fix/">WordPress speed fix</a> (the same site, made fast) · <a href="https://mckenneth.vercel.app/case-studies/ai-lead-responder/">AI lead responder</a> (the lead form) · <a href="https://mckenneth.vercel.app/case-studies/clinic-chat-assistant/">clinic chat assistant</a> (website chat and booking) · <a href="https://mckenneth.vercel.app/case-studies/inbox-triage/">AI inbox triage</a> (email and invoices)</p>
+
+<footer>
+<b>McKeen Asma</b> · WordPress &amp; AI Automation VA · Davao, Philippines<br>
+Portfolio: <a href="https://mckenneth.vercel.app">mckenneth.vercel.app</a>
+</footer>
+</article>
+</main>
+</body>
+</html>

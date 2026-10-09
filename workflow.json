@@ -1,0 +1,401 @@
+{
+  "id": "vaP6CareReport",
+  "name": "VA P6 — Website Care Report",
+  "active": true,
+  "settings": {
+    "timezone": "Asia/Manila",
+    "executionTimeout": 600
+  },
+  "connections": {
+    "Every Monday 08:00": {
+      "main": [
+        [
+          {
+            "node": "Uptime x3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run now": {
+      "main": [
+        [
+          {
+            "node": "Uptime x3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uptime x3": {
+      "main": [
+        [
+          {
+            "node": "Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health": {
+      "main": [
+        [
+          {
+            "node": "Lighthouse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lighthouse": {
+      "main": [
+        [
+          {
+            "node": "Build prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build prompt": {
+      "main": [
+        [
+          {
+            "node": "Ask Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask Claude": {
+      "main": [
+        [
+          {
+            "node": "Parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse": {
+      "main": [
+        [
+          {
+            "node": "Save",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save": {
+      "main": [
+        [
+          {
+            "node": "Render email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render email": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Mark emailed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark emailed": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "p6t1",
+      "name": "Every Monday 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        -200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "p6t2",
+      "name": "Run now",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        200
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "care-run",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "va-p6-care-run"
+    },
+    {
+      "id": "p6n220",
+      "name": "Uptime x3",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Three probes of the home page, a second apart; WordPress only answers its own host name, so send it.\nconst probes = [];\nfor (let i = 0; i < 3; i++) {\n  if (i) await new Promise(r => setTimeout(r, 1000));\n  const t = Date.now();\n  try {\n    const r = await this.helpers.httpRequest({ url: 'http://host.docker.internal:8092/', headers: { Host: 'localhost:8092' },\n      returnFullResponse: true, ignoreHttpStatusErrors: true, timeout: 15000 });\n    probes.push({ code: r.statusCode, ms: Date.now() - t });\n  } catch (e) { probes.push({ code: 0, ms: Date.now() - t }); }\n}\nconst up = probes.filter(p => p.code === 200);\nreturn [{ json: { uptime: { ok: up.length === probes.length, checks: probes.length, up: up.length,\n  avg_ms: up.length ? Math.round(up.reduce((s, p) => s + p.ms, 0) / up.length) : null,\n  max_ms: up.length ? Math.max(...up.map(p => p.ms)) : null, codes: probes.map(p => p.code) } } }];"
+      }
+    },
+    {
+      "id": "p6n440",
+      "name": "Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "url": "http://host.docker.internal:8092/wp-json/bayview/v1/health",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Host",
+              "value": "localhost:8092"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "vaP6CareBot",
+          "name": "VA P6 care-bot (WordPress)"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "id": "p6n660",
+      "name": "Lighthouse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8788/p6/lighthouse",
+        "options": {
+          "timeout": 100000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "p6n880",
+      "name": "Build prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const h = $('Health').first().json, l = $('Lighthouse').first().json;\nconst health = h.wp_version ? h : { error: 'health endpoint unreachable' };\nconst lighthouse = Number.isFinite(l.score) ? { score: l.score, scale: 100, lcp_ms: l.lcp_ms, lcp_s: Math.round(l.lcp_ms / 100) / 10,\n  total_bytes: l.total_bytes, total_kb: Math.round(l.total_bytes / 1024), total_mb: Math.round(l.total_bytes / 104857.6) / 10 } : null;\nconst now = new Date();\nconst backup_age_days = health.last_backup_at ? Math.floor((now - new Date(health.last_backup_at)) / 864e5) : null;\nconst outdated = (health.plugins || []).filter(p => p.update);\nconst data = { site: 'Bayview Dental (http://localhost:8092)', checked_on: now.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' }),\n  period_days: 7, uptime: $('Uptime x3').first().json.uptime, health, backup_age_days, backup_max_age_days: 7,\n  updates_pending: outdated.length + (health.theme_updates || 0) + (health.core_update ? 1 : 0), lighthouse };\nconst prompt = [\n  'You write the weekly website care report for the owner of Bayview Dental, a dental clinic in Davao City. She is not technical:',\n  'plain English, short sentences, no jargon (say \"speed score\", not \"LCP\"; \"add-ons\", not only \"plugins\"), calm and specific.',\n  'Return ONLY JSON: {\"status\":\"green\"|\"amber\"|\"red\",\"headline\":string (max 20 words),',\n  ' \"sections\":[{\"title\":string,\"body\":string (1-3 sentences)}] (3-5 sections: Online and speed, Updates, Backups, Errors, Security as relevant),',\n  ' \"actions\":[{\"what\":string,\"why\":string,\"effort\":\"quick\"|\"medium\"|\"large\"}] (1-4, most important first; if nothing is needed, one action saying so)}',\n  'status: green = healthy; amber = something needs doing this week (a pending update, no backup in the last backup_max_age_days days, PHP errors, speed score under 50); red = site down or the check failed.',\n  'uptime is 3 checks made just now, not monitoring over the week: never claim the site was up \"all week\".',\n  'NUMBERS RULE: use only numbers that appear in DATA, written exactly as there (you may use lcp_s, total_kb, total_mb, avg_ms). Never compute, round, estimate or add numbers or dates of your own. If unsure, leave the number out.',\n  'DATA: ' + JSON.stringify(data),\n].join('\\n');\nreturn [{ json: { prompt, data } }];"
+      }
+    },
+    {
+      "id": "p6n1100",
+      "name": "Ask Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8788/reply",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ prompt: $json.prompt }) }}",
+        "options": {
+          "timeout": 150000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "p6n1320",
+      "name": "Parse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Turns Claude's reply into a safe care report. Embedded verbatim in workflow.json's \"Parse\" node; tested by parse.check.mjs.\n// text: bridge reply (or undefined if the bridge failed), data: the run's real check data (the only source of numbers).\nfunction parseReport(text, data) {\n  const rank = { green: 0, amber: 1, red: 2 };\n  const h = data.health || {};\n  const outdated = (h.plugins || []).filter(p => p.update);\n  const updates = outdated.length + (h.theme_updates || 0) + (h.core_update ? 1 : 0);\n  const noBackup = data.backup_age_days == null || data.backup_age_days > data.backup_max_age_days;\n  // The data sets a floor Claude can raise but never lower: down/unreadable = red; updates, no recent backup, errors, slow = amber.\n  const floor = (!data.uptime.ok || !h.wp_version) ? 'red'\n    : (updates || noBackup || h.debug_errors_24h || !data.lighthouse || data.lighthouse.score < 50) ? 'amber' : 'green';\n\n  // Numbers guard: every number in the report must appear in the data (1,234 → 1234; 07 → 7), else that text is replaced.\n  const nums = s => (String(s).replace(/(\\d),(?=\\d{3}\\b)/g, '$1').match(/\\d+(?:\\.\\d+)*/g) || []).map(n => n.replace(/^0+(?=\\d)/, ''));\n  const allowed = new Set(nums(JSON.stringify(data)));\n  let guarded = 0;\n  const str = (v, max) => (typeof v === 'string' && v.trim()) ? v.trim().slice(0, max) : '';\n  const checked = s => { if (!s || nums(s).every(n => allowed.has(n))) return s; guarded++; return ''; };\n\n  let r = {};\n  try {\n    if (typeof text !== 'string') throw new Error('bridge failed');\n    const t = text.replace(/```(?:json)?/g, '');\n    r = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)) || {};\n  } catch (e) { r = {}; }\n\n  const status = rank[r.status] >= rank[floor] ? r.status : floor;\n  const headline = checked(str(r.headline, 160)) || {\n    green: 'Your website is healthy this week — nothing needs your attention.',\n    amber: 'Your website is up, but a few things need attention this week.',\n    red: 'Your website needs urgent attention.' }[status];\n  let sections = (Array.isArray(r.sections) ? r.sections : []).slice(0, 6).map(s => ({\n    title: checked(str(s && s.title, 60)) || 'This week',\n    body: checked(str(s && s.body, 700)) || 'We checked this; the exact figures are in the table below.',\n  }));\n  if (!sections.length) sections = [{ title: 'This week', body: 'The written summary is not available this week; the exact figures are in the table below.' }];\n  const actions = (Array.isArray(r.actions) ? r.actions : []).slice(0, 5).map(a => ({\n    what: checked(str(a && a.what, 160)), why: checked(str(a && a.why, 300)),\n    effort: ['quick', 'medium', 'large'].includes(a && a.effort) ? a.effort : 'medium',\n  })).filter(a => a.what && a.why);\n\n  // Belt and braces: the things the data says must be done always reach the owner, even if the write-up missed them.\n  const has = re => actions.some(a => re.test(a.what + ' ' + a.why));\n  if (!data.uptime.ok && !has(/offline|down|online/i))\n    actions.unshift({ what: 'Get the website back online', why: 'Patients could not open the site during this check.', effort: 'quick' });\n  if (updates && !has(/updat/i))\n    actions.push({ what: 'Install the pending updates' + (outdated.length ? ' (' + outdated.map(p => p.slug).join(', ') + ')' : ''),\n      why: 'Updates close security holes; out-of-date plugins are the most common way small sites get broken into.', effort: 'quick' });\n  if (noBackup && !has(/backup/i))\n    actions.push({ what: 'Take a fresh backup and keep the weekly backup running', why: 'There is no recent backup, so a broken update or a hack could not be undone.', effort: 'quick' });\n  if (!actions.length) actions.push({ what: 'No action needed — keep the weekly checks running', why: 'Everything we checked is healthy.', effort: 'quick' });\n  return { status, headline, sections, actions, guarded };\n}\n\nreturn [{ json: parseReport($input.first().json.text, $('Build prompt').first().json.data) }];"
+      }
+    },
+    {
+      "id": "p6n1540",
+      "name": "Save",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1760,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "insert into p6_reports (status, data, report) values ($1, $2::jsonb, $3::jsonb) returning id, status",
+        "options": {
+          "queryReplacement": "={{ [$json.status, JSON.stringify($('Build prompt').first().json.data), JSON.stringify($json)] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "vaPgLocal",
+          "name": "VA Postgres (local)"
+        }
+      }
+    },
+    {
+      "id": "p6n1760",
+      "name": "Render email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const p = $('Parse').first().json, d = $('Build prompt').first().json.data, id = $('Save').first().json.id;\nconst esc = s => String(s == null ? '' : s).replace(/[&<>\"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\nconst color = { green: '#1f8a4c', amber: '#b7791f', red: '#c53030' }[p.status];\nconst h = d.health || {}, l = d.lighthouse;\nconst rows = [\n  ['Online', d.uptime.up + ' of ' + d.uptime.checks + ' checks' + (d.uptime.avg_ms != null ? ', average ' + d.uptime.avg_ms + ' ms' : '')],\n  ['Speed score (mobile)', l ? l.score + ' / 100, main image in ' + l.lcp_s + ' s, page ' + l.total_kb + ' KB' : 'not measured'],\n  ['Updates waiting', d.updates_pending + ((h.plugins || []).filter(x => x.update).map(x => ' — ' + x.slug + ' ' + x.version + ' → ' + x.update).join(''))],\n  ['Last backup', d.backup_age_days == null ? 'none found' : d.backup_age_days === 0 ? 'today' : d.backup_age_days + ' days ago'],\n  ['PHP errors (24 h)', h.debug_errors_24h ?? 'unknown'],\n  ['WordPress / PHP', (h.wp_version || '?') + ' / ' + (h.php_version || '?')],\n];\nconst html = '<div style=\"font-family:Arial,Helvetica,sans-serif;max-width:620px;margin:0 auto;color:#1a202c;line-height:1.5\">'\n  + '<p style=\"margin:0 0 4px;color:#4a5568;font-size:13px\">Bayview Dental · Website care report · ' + esc(d.checked_on) + '</p>'\n  + '<p style=\"display:inline-block;margin:8px 0;padding:4px 12px;border-radius:999px;background:' + color + ';color:#fff;font-weight:bold;font-size:13px;letter-spacing:.05em\">' + p.status.toUpperCase() + '</p>'\n  + '<h1 style=\"font-size:22px;margin:4px 0 16px\">' + esc(p.headline) + '</h1>'\n  + p.sections.map(s => '<h2 style=\"font-size:16px;margin:16px 0 4px\">' + esc(s.title) + '</h2><p style=\"margin:0\">' + esc(s.body) + '</p>').join('')\n  + '<h2 style=\"font-size:16px;margin:24px 0 8px\">What to do</h2><ol style=\"padding-left:20px;margin:0\">'\n  + p.actions.map(a => '<li style=\"margin-bottom:8px\"><b>' + esc(a.what) + '</b> <span style=\"color:#4a5568;font-size:12px\">(' + esc(a.effort) + ')</span><br>' + esc(a.why) + '</li>').join('') + '</ol>'\n  + '<h2 style=\"font-size:16px;margin:24px 0 8px\">The numbers</h2><table style=\"border-collapse:collapse;width:100%;font-size:14px\">'\n  + rows.map(r => '<tr><td style=\"padding:6px 8px;border-top:1px solid #e2e8f0;color:#4a5568\">' + esc(r[0]) + '</td><td style=\"padding:6px 8px;border-top:1px solid #e2e8f0\">' + esc(r[1]) + '</td></tr>').join('')\n  + '</table><p style=\"margin-top:24px;color:#718096;font-size:12px\">Report #' + id + '. Checked automatically every Monday 08:00; written with AI, every number checked against the data above.</p></div>';\nreturn [{ json: { subject: 'Website care report — Bayview Dental — ' + d.checked_on + ' — ' + p.status.toUpperCase(), html } }];"
+      }
+    },
+    {
+      "id": "p6n1980",
+      "name": "Send email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2200,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "Bayview Website Care <care@bayviewdental.example>",
+        "toEmail": "owner@bayviewdental.example",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "vaMailpit",
+          "name": "VA Mailpit (local SMTP)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "p6n2200",
+      "name": "Mark emailed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2420,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "update p6_reports set emailed = $2::boolean where id = $1 returning id as report_id, status, emailed",
+        "options": {
+          "queryReplacement": "={{ [$('Save').first().json.id, !$json.error] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "vaPgLocal",
+          "name": "VA Postgres (local)"
+        }
+      }
+    },
+    {
+      "id": "p6n2420",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ]
+}

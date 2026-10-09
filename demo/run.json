@@ -1,0 +1,325 @@
+{
+  "marks": {
+    "title": 0,
+    "run1": 6.53,
+    "flow": 9.05,
+    "done1": 32.4,
+    "inbox1": 35.48,
+    "email1": 37.9,
+    "sections1": 41.85,
+    "actions1": 47.16,
+    "stale": 51.81,
+    "staleDone": 58.62,
+    "run2": 59.42,
+    "done2": 92.28,
+    "inbox2": 94.6,
+    "email2": 97.06,
+    "actions2": 103.29,
+    "archive": 107.52,
+    "end": 113.43,
+    "stop": 118.94
+  },
+  "responses": [
+    {
+      "report_id": 1,
+      "status": "green",
+      "emailed": true
+    },
+    {
+      "report_id": 2,
+      "status": "amber",
+      "emailed": true
+    }
+  ],
+  "reports": [
+    {
+      "id": 1,
+      "status": "green",
+      "emailed": true,
+      "report": {
+        "status": "green",
+        "actions": [
+          {
+            "why": "The main part of the page takes 5.7 seconds to appear. Patients on phones may leave before it loads.",
+            "what": "Nothing urgent is needed this week. If you like, we can make the home page load faster, for example by making its images smaller.",
+            "effort": "medium"
+          }
+        ],
+        "guarded": 0,
+        "headline": "Your website is online, up to date, backed up today, and showing no errors.",
+        "sections": [
+          {
+            "body": "We checked your site 3 times just now and it answered every time, in 137 milliseconds on average. Your speed score is 74 out of 100. The main part of your home page takes 5.7 seconds to appear, which is a little slow.",
+            "title": "Online and speed"
+          },
+          {
+            "body": "WordPress, your theme and all your add-ons (plugins) are up to date. Nothing is waiting to be installed.",
+            "title": "Updates"
+          },
+          {
+            "body": "A fresh backup of your site was made today. Your site is protected if anything goes wrong.",
+            "title": "Backups"
+          },
+          {
+            "body": "There were no website errors in the last 24 hours.",
+            "title": "Errors"
+          }
+        ]
+      },
+      "uptime": {
+        "ok": true,
+        "up": 3,
+        "codes": [
+          200,
+          200,
+          200
+        ],
+        "avg_ms": 137,
+        "checks": 3,
+        "max_ms": 163
+      },
+      "lighthouse": {
+        "lcp_s": 5.7,
+        "scale": 100,
+        "score": 74,
+        "lcp_ms": 5657,
+        "total_kb": 722,
+        "total_mb": 0.7,
+        "total_bytes": 738914
+      },
+      "updates_pending": 0,
+      "backup_age_days": 0
+    },
+    {
+      "id": 2,
+      "status": "amber",
+      "emailed": true,
+      "report": {
+        "status": "amber",
+        "actions": [
+          {
+            "why": "Updates fix problems and close security gaps. Patients use this form to reach you, so it should stay current.",
+            "what": "Update the contact form add-on from version 6.1.7 to 6.2.1.",
+            "effort": "quick"
+          },
+          {
+            "why": "It takes 5.3 seconds to appear right now. Patients on phones may leave before it loads.",
+            "what": "Make the main part of the home page show up faster.",
+            "effort": "medium"
+          }
+        ],
+        "guarded": 0,
+        "headline": "Your website is online and backed up today. One add-on needs an update this week.",
+        "sections": [
+          {
+            "body": "We checked your website 3 times just now, and it answered all 3 times. It responded in 305 milliseconds on average. Your speed score is 77 out of 100, but the main part of the page takes 5.3 seconds to appear, which feels slow on a phone.",
+            "title": "Online and speed"
+          },
+          {
+            "body": "One add-on needs an update: the contact form add-on, from version 6.1.7 to 6.2.1. WordPress itself, your theme and your other add-ons are up to date.",
+            "title": "Updates"
+          },
+          {
+            "body": "A full backup of your website was made today. That is well within the 7-day limit we aim for.",
+            "title": "Backups"
+          },
+          {
+            "body": "We found 0 website errors in the last day. Nothing needs fixing here.",
+            "title": "Errors"
+          }
+        ]
+      },
+      "uptime": {
+        "ok": true,
+        "up": 3,
+        "codes": [
+          200,
+          200,
+          200
+        ],
+        "avg_ms": 305,
+        "checks": 3,
+        "max_ms": 599
+      },
+      "lighthouse": {
+        "lcp_s": 5.3,
+        "scale": 100,
+        "score": 77,
+        "lcp_ms": 5270,
+        "total_kb": 721,
+        "total_mb": 0.7,
+        "total_bytes": 738152
+      },
+      "updates_pending": 1,
+      "backup_age_days": 0
+    }
+  ],
+  "plan": [
+    {
+      "id": "1-hook",
+      "kind": "hold",
+      "ss": 0,
+      "src": 6.53,
+      "dur": 8.75,
+      "at": 0,
+      "vs": 0.4,
+      "ch": 0,
+      "cut": 0
+    },
+    {
+      "id": "2-run",
+      "kind": "live",
+      "ss": 6.48,
+      "src": 2.52,
+      "dur": 2.52,
+      "at": 8.75,
+      "vs": 9.15,
+      "ch": 1,
+      "cut": 0
+    },
+    {
+      "id": "3-flow",
+      "kind": "hold",
+      "ss": 9,
+      "src": 15.537,
+      "dur": 15.54,
+      "at": 11.27,
+      "vs": 15.9,
+      "ch": 1,
+      "cut": 0
+    },
+    {
+      "id": null,
+      "kind": "wait",
+      "ss": 24.537,
+      "src": 6.613,
+      "dur": 1.4,
+      "at": 26.81,
+      "vs": null,
+      "ch": 1,
+      "cut": 5.2
+    },
+    {
+      "id": null,
+      "kind": "hold",
+      "ss": 31.15,
+      "src": 2.4,
+      "dur": 2.4,
+      "at": 28.21,
+      "vs": null,
+      "ch": 1,
+      "cut": 0
+    },
+    {
+      "id": "4-inbox",
+      "kind": "live",
+      "ss": 35.43,
+      "src": 2.42,
+      "dur": 2.42,
+      "at": 30.61,
+      "vs": 31.01,
+      "ch": 2,
+      "cut": 0
+    },
+    {
+      "id": "5-read",
+      "kind": "hold",
+      "ss": 37.85,
+      "src": 9.26,
+      "dur": 9.32,
+      "at": 33.03,
+      "vs": 33.89,
+      "ch": 2,
+      "cut": 0
+    },
+    {
+      "id": "6-actions",
+      "kind": "hold",
+      "ss": 47.11,
+      "src": 4.65,
+      "dur": 4.65,
+      "at": 42.35,
+      "vs": 42.75,
+      "ch": 2,
+      "cut": 0
+    },
+    {
+      "id": "7-stale",
+      "kind": "hold",
+      "ss": 51.76,
+      "src": 7.61,
+      "dur": 7.61,
+      "at": 47,
+      "vs": 47.4,
+      "ch": 3,
+      "cut": 0
+    },
+    {
+      "id": "8-run2",
+      "kind": "live",
+      "ss": 59.37,
+      "src": 3,
+      "dur": 3,
+      "at": 54.61,
+      "vs": 55.01,
+      "ch": 3,
+      "cut": 0
+    },
+    {
+      "id": null,
+      "kind": "wait",
+      "ss": 62.37,
+      "src": 28.66,
+      "dur": 1.6,
+      "at": 57.61,
+      "vs": null,
+      "ch": 3,
+      "cut": 27.1
+    },
+    {
+      "id": null,
+      "kind": "hold",
+      "ss": 91.03,
+      "src": 2.4,
+      "dur": 2.4,
+      "at": 59.21,
+      "vs": null,
+      "ch": 3,
+      "cut": 0
+    },
+    {
+      "id": "9-amber",
+      "kind": "hold",
+      "ss": 94.55,
+      "src": 11.09,
+      "dur": 11.09,
+      "at": 61.61,
+      "vs": 62.01,
+      "ch": 4,
+      "cut": 0
+    },
+    {
+      "id": "10-archive",
+      "kind": "hold",
+      "ss": 107.47,
+      "src": 5.91,
+      "dur": 7.73,
+      "at": 72.7,
+      "vs": 73.1,
+      "ch": 5,
+      "cut": 0
+    },
+    {
+      "id": "11-end",
+      "kind": "hold",
+      "ss": 113.38,
+      "src": 5.51,
+      "dur": 7.98,
+      "at": 80.43,
+      "vs": 80.83,
+      "ch": 6,
+      "cut": 0
+    }
+  ],
+  "seconds": 88.41
+}
