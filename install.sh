@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 P5=${SITE_DIR:-../wp-site-rescue}   # the WordPress site: mcknx/wp-site-rescue cloned next to this repo
 cli() { docker compose -p va-p5 exec -T cli "$@"; }
-[[ -s .care-bot-pass ]] || LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 24 > .care-bot-pass   # gitignored
+[[ -s .care-bot-pass ]] || openssl rand -hex 12 > .care-bot-pass   # gitignored; no tr|head pipe: under pipefail tr's SIGPIPE killed the first run
 pass=$(cat .care-bot-pass)
 
 cli sh -c 'mkdir -p wp-content/mu-plugins && cat > wp-content/mu-plugins/bayview-health.php' < mu-plugin/bayview-health.php

@@ -2,7 +2,34 @@
 
 A weekly "website care plan" report for a clinic owner who is not technical. Every Monday at 08:00 an n8n workflow checks a WordPress site (is it online, updates waiting, WordPress/PHP versions, PHP errors, last backup, a Lighthouse speed score), Claude writes a plain-English report with a green/amber/red status and a short to-do list, code checks every number in it against the real data, and the report is saved, emailed and kept in an archive.
 
-Live case study (with the demo video): https://mckenneth.vercel.app/case-studies/wp-care-report/
+**What this proves:** an n8n workflow that checks a WordPress site (uptime, updates, versions, PHP errors, backup age, Lighthouse), has Claude write a plain-English report, and then checks in code every number Claude wrote against the real data before the report is saved and emailed. `./check.sh` runs it twice end to end.
+
+[![Demo: the n8n workflow checks the site, the green report arrives in the owner's inbox, a plugin is put behind on purpose and the next report turns amber with the exact update to do](demo/demo.gif)](demo/p6-demo.mp4)
+
+15-second preview at 5x speed. Click it for the full 88-second narrated demo (`demo/p6-demo.mp4`).
+
+**Live case study:** https://mckenneth.vercel.app/case-studies/wp-care-report/
+
+**`./check.sh`, run on 16 Oct 2026 from a fresh clone** against the Docker stack below with live Claude calls (real output):
+
+```text
+parse ok: 12 cases
+[restore] healthy snapshot restored
+[install] mu-plugin + care-bot ready, health endpoint 200
+run 1: {"report_id":1,"status":"amber","emailed":true}
+p6 ok: status amber
+p6 ok: actions present, uptime ok, emailed
+p6 ok: 1 email to the owner, subject: Website care report — Bayview Dental — 2026-10-16 — AMBER
+run 2: {"report_id":2,"status":"amber","emailed":true}
+p6 ok: status amber with an outdated plugin and no backup
+p6 ok: an action says to update / back up
+p6 ok: 2nd email sent
+p6 PASS (site back to contact-form-7 6.2.1, fresh backup)
+```
+
+Run 1 was amber, not green, because wordpress.org had released updates since the demo was filmed (Contact Form 7 6.2.2, Elementor 4.3.5 and a theme update). Claude's headline: "Your site is online and was backed up today, but 3 updates are waiting to be installed this week." Run 2 added the missing backup to the to-do list.
+
+**Caveat:** demo clinic with fictional data (Bayview Dental), not client work. The email goes to a local test mailbox (Mailpit), and "online" means 3 requests at report time, not 24/7 monitoring (see Honest notes).
 
 ## What you get
 
